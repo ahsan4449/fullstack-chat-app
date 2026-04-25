@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 .env
+*implementation_plan.md
+*walkthrough.md
+*walkthrough2.md
+*walkthrough3.md

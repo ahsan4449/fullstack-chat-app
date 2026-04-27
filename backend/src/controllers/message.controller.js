@@ -3,6 +3,7 @@ import Message from "../models/message.model.js";
 
 import cloudinary from "../lib/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
+import { translateText } from "../lib/translate.js";
 
 export const getUsersForSidebar = async (req, res) => {
   try {
@@ -37,7 +38,7 @@ export const getMessages = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text, image, ttl } = req.body;  // ttl = seconds, null = permanent
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
@@ -48,11 +49,22 @@ export const sendMessage = async (req, res) => {
       imageUrl = uploadResponse.secure_url;
     }
 
+    let translatedText = "";
+    if (text) {
+      translatedText = await translateText(text, "en");
+    }
+
+    // Self-destruct: compute expiresAt from ttl (seconds)
+    const expiresAt = ttl && ttl > 0 ? new Date(Date.now() + ttl * 1000) : null;
+
     const newMessage = new Message({
       senderId,
       receiverId,
       text,
+      translatedText,
       image: imageUrl,
+      ttl: expiresAt ? ttl : null,
+      expiresAt,
     });
 
     await newMessage.save();

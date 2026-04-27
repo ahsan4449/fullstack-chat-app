@@ -34,6 +34,23 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+
+    // ── High-Security Mode: Self-Destructing Messages ─────────────────────
+    // ttl: seconds until deletion (null = never expires)
+    // expiresAt: absolute timestamp when MongoDB TTL index will delete it
+    ttl: {
+      type: Number,
+      default: null, // null = permanent message
+    },
+    expiresAt: {
+      type: Date,
+      default: null,
+      index: { expireAfterSeconds: 0 }, // MongoDB TTL index — auto-deletes at expiresAt
+    },
+    isExpired: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -1,4 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
+
+// const MODEL = "gemini-1.5-flash";
+const MODEL ="gemini-3-flash-preview";
+
 
 export const processChatContext = async (req, res) => {
   try {
@@ -9,15 +13,11 @@ export const processChatContext = async (req, res) => {
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
-
     if (!apiKey) {
       return res.status(500).json({ error: "Gemini API Key is not configured." });
     }
 
-    // Initialize Google Generative AI
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
-
+    const ai = new GoogleGenAI({ apiKey, httpOptions: { apiVersion: "v1beta" } });
     const isGroup = !!groupName;
 
     // Format chat history for context
@@ -43,17 +43,13 @@ export const processChatContext = async (req, res) => {
     } else if (mode === "sentiment") {
       prompt = `${contextPrefix}You are an AI that only outputs emojis. Analyze the tone of the last few messages in this conversation and return a single emoji representing the mood (e.g., 😠, 😊, 🚨). Return ONLY the emoji, nothing else:\n\n${chatHistory}`;
     } else {
-      return res.status(400).json({ error: "Invalid mode provided. Expected 'summary', 'reply', or 'sentiment'." });
+      return res.status(400).json({ error: "Invalid mode. Expected 'summary', 'reply', or 'sentiment'." });
     }
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-
-    res.status(200).json({ result: text.trim() });
+    const result = await ai.models.generateContent({ model: MODEL, contents: prompt });
+    res.status(200).json({ result: result.text.trim() });
   } catch (error) {
     console.error("Error in processChatContext: ", error);
     res.status(500).json({ error: "Failed to process chat context with AI." });
   }
 };
-

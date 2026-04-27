@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm --dir backend install && pnpm --dir frontend install && pnpm --dir frontend run build",
+    "build": "pnpm --dir backend install --no-frozen-lockfile && pnpm --dir frontend install --no-frozen-lockfile && pnpm --dir frontend run build",
     "start": "NODE_ENV=production pnpm --dir backend run start",
     "dev:frontend": "pnpm --dir frontend run dev",
     "dev:backend": "pnpm --dir backend run dev",

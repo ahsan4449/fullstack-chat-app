@@ -1,124 +1,184 @@
+<div align="center">
 
-# 💬 REAL-Time-Chat-App Chat App
+# 💬 SyncTalk
 
-A real-time chat application built with the **MERN stack** (MongoDB, Express.js, React.js, Node.js) and **WebSocket** for live communication. The app supports **authentication**, **authorization**, and **individual user chats** — all bundled in a clean, responsive UI.
+### A full-featured, real-time MERN chat application with AI, group chats, memory, and high-security features.
 
----
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://synctalk-qas1.onrender.com)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/)
 
-## 🚀 Features
-
-- ✅ User Registration & Login (with JWT authentication)
-- 🔐 Authorization for protected routes
-- 💬 Real-time one-on-one messaging using WebSockets (via `socket.io`)
-- 📃 Chat history persistence with MongoDB
-- 🌐 RESTful API backend
-- 💡 React-based frontend with state management (via Context API or Redux)
-- 🔄 Auto-refresh and live status updates
-- ⚙️ Backend error handling and input validation
+</div>
 
 ---
 
+## ✨ Features
+
+### 💬 Messaging
+- Real-time one-on-one messaging via **Socket.io** WebSockets
+- Persistent chat history stored in MongoDB
+- Image & media sharing (uploaded via **Cloudinary**)
+- Message translation powered by **Google Cloud Translate**
+- Self-destructing messages with configurable TTL (time-to-live)
+
+### 👥 Group Chats
+- Create and manage group conversations
+- Real-time group messaging with per-room Socket.io rooms
+- Group member management
+
+### 🤖 AI Features
+- **AI Chat Assistant** powered by Google Gemini
+  - `summary` — 3-bullet summary of any conversation
+  - `reply` — 3 smart reply suggestions
+  - `sentiment` — single emoji mood detector
+- **AI Memory Chat** — persistent user memory store with pronoun resolution and contextual recall
+
+### 🔒 Security
+- JWT authentication with **HttpOnly cookies**
+- **High-Security Mode** with screenshot detection (notifies the other party)
+- Self-destruct message timer (`SelfDestructTimer` component)
+- Bcrypt password hashing
+
+### 🎨 UI / UX
+- 32+ DaisyUI themes (switchable at runtime)
+- Responsive, mobile-friendly layout
+- Skeleton loading states
+- Toast notifications via `react-hot-toast`
+- Online/offline user indicators
+
+---
 
 ## 🧑‍💻 Tech Stack
 
-| Layer       | Technology                             |
-|-------------|-----------------------------------------|
-| Frontend    | React.js, Axios, Context API/Redux      |
-| Backend     | Node.js, Express.js                     |
-| Database    | MongoDB + Mongoose                      |
-| Real-Time   | Socket.io (WebSocket)                   |
-| Auth        | JSON Web Tokens (JWT), Bcrypt           |
-| Styling     | Tailwind                                |
-| Deployment  | Render                                  |
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 19, Vite, Tailwind CSS v4, DaisyUI |
+| **State Management** | Zustand |
+| **Backend** | Node.js, Express.js v5 |
+| **Database** | MongoDB + Mongoose |
+| **Real-Time** | Socket.io (WebSocket) |
+| **Authentication** | JWT, Bcrypt, HttpOnly Cookies |
+| **File Uploads** | Cloudinary |
+| **AI** | Google Gemini (`@google/genai`) |
+| **Translation** | Google Cloud Translate |
+| **Deployment** | Render (single web service) |
 
 ---
 
-##live link 
-https://synctalk-qas1.onrender.com
+## 🌐 Live Demo
 
-## 📦 Installation & Setup
+**[https://synctalk-qas1.onrender.com](https://synctalk-qas1.onrender.com)**
 
-1. **Clone the repo**
-
-```bash
-git clone https://github.com/ahsan4449/fullstack-chat-app
-cd fullstack-chat-app
-```
-
-2. **Install dependencies**
-
-```bash
-# For backend
-cd backend
-npm install
-
-# For frontend
-cd frontend
-npm install
-```
-
-3. **Configure environment variables**
-
-Create a `.env` file in the `server` directory and add the following:
-
-```
-PORT=5000
-MONGO_URI=your_mongo_connection_string
-JWT_SECRET=your_jwt_secret_key
-```
-
-4. **Run the app**
-
-```bash
-# Run backend
-cd server
-npm run dev
-
-# Run frontend
-cd ../client
-npm start
-```
+> ⚠️ Hosted on Render's free tier — the app may take ~30 seconds to wake up after inactivity.
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-Real-Time-Chat-App/
-│
-├── client/          # React frontend
+fullstack-chat-app/
+├── backend/
 │   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── utils/
-│       └── ...
+│       ├── controllers/       # Auth, message, AI, group, memory
+│       ├── lib/               # DB, Cloudinary, Socket.io, translate utils
+│       ├── middleware/        # JWT auth middleware
+│       ├── models/            # Mongoose schemas
+│       ├── routes/            # Express route definitions
+│       └── index.js           # App entry point
 │
-├── server/          # Express backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   └── ...
+├── frontend/
+│   └── src/
+│       ├── components/        # ChatContainer, Sidebar, AiMemoryChat, etc.
+│       ├── hooks/             # Custom React hooks
+│       ├── lib/               # Axios instance, utils
+│       ├── pages/             # Home, Login, SignUp, Profile, Settings
+│       ├── store/             # Zustand stores (auth, chat, group, memory, theme)
+│       └── App.jsx
 │
-└── screenshots/     # App screenshots
+├── render.yaml                # Render deployment blueprint
+├── package.json               # Root scripts (build & start for Render)
+└── .env.example               # Environment variable template
 ```
 
 ---
 
-## 🔐 Authentication Flow (Brief)
+## 📦 Local Setup
 
-1. User signs up or logs in — backend issues JWT.
-2. JWT stored in localStorage or HttpOnly cookies.
-3. Protected routes validated using middleware in backend.
-4. WebSocket connection established post-authentication.
+### Prerequisites
+- Node.js >= 18
+- pnpm (`npm install -g pnpm`)
+- MongoDB Atlas account
+- Cloudinary account
+- Google Gemini API key
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/ahsan4449/fullstack-chat-app
+cd fullstack-chat-app
+```
+
+### 2. Install dependencies
+```bash
+# Install root + backend + frontend deps
+pnpm install
+pnpm --dir backend install
+pnpm --dir frontend install
+```
+
+### 3. Configure environment variables
+
+Copy the example file and fill in your values:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+```env
+PORT=5001
+NODE_ENV=development
+MONGODB_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/<db>
+JWT_SECRET=your_jwt_secret_key
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+GEMINI_API_KEY=your_gemini_api_key
+FRONTEND_URL=http://localhost:5173
+```
+
+### 4. Run the development servers
+
+```bash
+# Terminal 1 — Backend (port 5001)
+pnpm --dir backend run dev
+
+# Terminal 2 — Frontend (port 5173)
+pnpm --dir frontend run dev
+```
 
 ---
 
-## 📈 Future Improvements
+## 🚀 Deploying to Render
 
-- Group chats and media sharing 📷
-- Online/offline user indicators 🟢
-- Push notifications 🔔
-- Dockerization & CI/CD pipeline 🐳
+1. Push the repo to GitHub
+2. On [render.com](https://render.com) → **New Web Service** → connect your GitHub repo
+3. Set the following:
+   - **Build Command:** `pnpm install && pnpm run build`
+   - **Start Command:** `pnpm run start`
+4. Add all environment variables from `.env.example` in the Render dashboard
+5. Set `FRONTEND_URL` to your Render app URL (e.g. `https://synctalk-qas1.onrender.com`)
+6. Allow all IPs (`0.0.0.0/0`) in MongoDB Atlas → Network Access
+
+---
+
+## 🔐 Authentication Flow
+
+1. User signs up / logs in → backend issues a signed **JWT**
+2. JWT stored in **HttpOnly cookie** (XSS-safe)
+3. Protected routes verified via auth middleware
+4. Socket.io connection established post-authentication using `userId` from the query string
 
 ---
 
@@ -133,4 +193,4 @@ Real-Time-Chat-App/
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**.

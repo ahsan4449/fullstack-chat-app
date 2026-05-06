@@ -1,11 +1,12 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import MessageRenderer from "./MessageRenderer";
 import SelfDestructTimer from "./SelfDestructTimer";
+import MessageContextMenu from "./MessageContextMenu";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/utils";
 import { useSecurity } from "../hooks/useSecurity";
@@ -19,12 +20,17 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    deleteMessage,
   } = useChatStore();
   const { authUser, socket } = useAuthStore();
   const messageEndRef = useRef(null);
 
   // Local list so we can splice out expired/self-destruct messages
   const [localMessages, setLocalMessages] = useState([]);
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState(null);
+  // { x, y, message, selectedText }
 
   // Screenshot detection — silently notifies the other user, no UI change on sender
   useSecurity({ targetUserId: selectedUser?._id, enabled: true });
@@ -73,6 +79,20 @@ const ChatContainer = () => {
     setLocalMessages((prev) => prev.filter((m) => m._id !== messageId));
   };
 
+  // ── Context menu: right-click handler ─────────────────────────────────
+  const handleContextMenu = useCallback((e, message) => {
+    e.preventDefault();
+    const selectedText = window.getSelection()?.toString() || "";
+    setContextMenu({ x: e.clientX, y: e.clientY, message, selectedText });
+  }, []);
+
+  const handleDeleteMessage = useCallback(async (messageId) => {
+    setLocalMessages((prev) => prev.filter((m) => m._id !== messageId));
+    await deleteMessage(messageId);
+  }, [deleteMessage]);
+
+  const closeMenu = useCallback(() => setContextMenu(null), []);
+
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
@@ -114,7 +134,11 @@ const ChatContainer = () => {
               </time>
             </div>
 
-            <div className="chat-bubble flex flex-col max-w-[85%]">
+            {/* Bubble — right-click to open context menu */}
+            <div
+              className="chat-bubble flex flex-col max-w-[85%] cursor-context-menu"
+              onContextMenu={(e) => handleContextMenu(e, message)}
+            >
               {message.image && (
                 <img
                   src={message.image}
@@ -141,6 +165,19 @@ const ChatContainer = () => {
       </div>
 
       <MessageInput />
+
+      {/* Context menu portal */}
+      {contextMenu && (
+        <MessageContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          message={contextMenu.message}
+          isOwn={contextMenu.message.senderId === authUser._id}
+          selectedText={contextMenu.selectedText}
+          onClose={closeMenu}
+          onDelete={handleDeleteMessage}
+        />
+      )}
     </div>
   );
 };

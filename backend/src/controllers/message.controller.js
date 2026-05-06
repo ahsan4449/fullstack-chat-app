@@ -80,3 +80,35 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { id: messageId } = req.params;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ error: "Message not found" });
+
+    // Only the sender can delete their own message
+    if (message.senderId.toString() !== userId.toString()) {
+      return res.status(403).json({ error: "You can only delete your own messages" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+
+    // Real-time: notify the other party so they remove it from their UI
+    const payload = { messageId: messageId.toString() };
+    if (message.receiverId) {
+      const receiverSocketId = getReceiverSocketId(message.receiverId.toString());
+      if (receiverSocketId) io.to(receiverSocketId).emit("messageDeleted", payload);
+    }
+    if (message.groupId) {
+      io.to(`group:${message.groupId}`).emit("messageDeleted", payload);
+    }
+
+    res.status(200).json({ success: true, messageId: messageId.toString() });
+  } catch (error) {
+    console.log("Error in deleteMessage controller: ", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

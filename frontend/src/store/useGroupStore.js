@@ -60,6 +60,16 @@ export const useGroupStore = create((set, get) => ({
     }
   },
 
+  deleteGroupMessage: async (messageId) => {
+    try {
+      await axiosInstance.delete(`/messages/${messageId}`);
+      set({ groupMessages: get().groupMessages.filter((m) => m._id !== messageId) });
+      toast.success("Message deleted");
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to delete message");
+    }
+  },
+
   setSelectedGroup: (group) => {
     // Clear DM selection when a group is selected
     useChatStore.getState().setSelectedUser(null);
@@ -80,12 +90,17 @@ export const useGroupStore = create((set, get) => ({
         groupMessages: [...get().groupMessages, newMessage],
       });
     });
+
+    socket.on("messageDeleted", ({ messageId }) => {
+      set({ groupMessages: get().groupMessages.filter((m) => m._id !== messageId) });
+    });
   },
 
   unsubscribeFromGroupMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (socket) {
       socket.off("newGroupMessage");
+      socket.off("messageDeleted");
     }
   },
 

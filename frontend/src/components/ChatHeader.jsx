@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Bot, Loader } from "lucide-react";
+import { X, Bot, Loader, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { axiosInstance } from "../lib/axios";
@@ -36,7 +36,16 @@ const ChatHeader = () => {
   return (
     <div className="p-2.5 border-b border-base-300">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Back button — mobile only */}
+          <button
+            onClick={() => setSelectedUser(null)}
+            className="btn btn-ghost btn-sm btn-circle lg:hidden"
+            aria-label="Back"
+          >
+            <ArrowLeft className="size-5" />
+          </button>
+
           {/* Avatar */}
           <div className="avatar">
             <div className="size-10 rounded-full relative">
@@ -64,9 +73,13 @@ const ChatHeader = () => {
             <span className="hidden md:block text-xs">AI</span>
           </button>
 
-          {/* Close button */}
-          <button onClick={() => setSelectedUser(null)}>
-            <X />
+          {/* Close button — desktop only */}
+          <button
+            onClick={() => setSelectedUser(null)}
+            className="btn btn-ghost btn-sm btn-circle hidden lg:flex"
+            aria-label="Close"
+          >
+            <X className="size-5" />
           </button>
         </div>
       </div>

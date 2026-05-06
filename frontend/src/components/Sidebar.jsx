@@ -38,7 +38,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
+      <aside className="h-full w-full lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
         {/* Tab Header */}
         <div className="border-b border-base-300 w-full p-3">
           <div className="flex gap-1 bg-base-200 p-1 rounded-lg">
@@ -51,7 +51,7 @@ const Sidebar = () => {
               }`}
             >
               <MessageSquare className="size-4" />
-              <span className="hidden lg:block">Chats</span>
+              <span className="lg:block">Chats</span>
             </button>
             <button
               onClick={() => setActiveTab("groups")}
@@ -62,13 +62,13 @@ const Sidebar = () => {
               }`}
             >
               <Users className="size-4" />
-              <span className="hidden lg:block">Groups</span>
+              <span className="lg:block">Groups</span>
             </button>
           </div>
 
           {/* Online filter — only show on Chats tab */}
           {activeTab === "chats" && (
-            <div className="mt-2 hidden lg:flex items-center gap-2">
+            <div className="mt-2 flex items-center gap-2">
               <label className="cursor-pointer flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -86,7 +86,7 @@ const Sidebar = () => {
           {activeTab === "groups" && (
             <button
               onClick={() => setShowCreateGroup(true)}
-              className="mt-2 hidden lg:flex w-full items-center gap-2 btn btn-sm btn-outline btn-primary"
+              className="mt-2 flex w-full items-center gap-2 btn btn-sm btn-outline btn-primary"
             >
               <Plus className="size-4" />
               New Group
@@ -98,6 +98,7 @@ const Sidebar = () => {
               className="mt-2 flex lg:hidden w-full items-center justify-center btn btn-sm btn-outline btn-primary"
             >
               <Plus className="size-4" />
+              <span className="ml-1">New Group</span>
             </button>
           )}
         </div>
@@ -124,7 +125,7 @@ const Sidebar = () => {
                       <span className="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full ring-2 ring-zinc-900" />
                     )}
                   </div>
-                  <div className="hidden lg:block text-left min-w-0">
+                  <div className="text-left min-w-0">
                     <div className="font-medium truncate">{user.fullName}</div>
                     <div className="text-sm text-zinc-400">
                       {onlineUsers.includes(user._id) ? "Online" : "Offline"}
@@ -174,7 +175,7 @@ const Sidebar = () => {
                         </div>
                       )}
                     </div>
-                    <div className="hidden lg:block text-left min-w-0">
+                    <div className="text-left min-w-0">
                       <div className="font-medium truncate">{group.name}</div>
                       <div className="text-sm text-zinc-400 truncate">
                         {group.members?.length} members

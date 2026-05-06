@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useMemoryStore } from "../store/useMemoryStore";
-import { Brain, Send, Trash2, Clock, Tag, Star, X, RefreshCw } from "lucide-react";
+import { Brain, Send, Trash2, Clock, Tag, Star, X, RefreshCw, ArrowLeft } from "lucide-react";
 import MessageRenderer from "./MessageRenderer";
 
 // ── Memory Panel (right sidebar) ───────────────────────────────────────────
@@ -20,7 +20,7 @@ const MemoryPanel = ({ memories, onDelete, onRefresh }) => {
   };
 
   return (
-    <div className="w-72 border-l border-base-300 flex flex-col bg-base-100 h-full">
+    <div className="w-full sm:w-72 border-l border-base-300 flex flex-col bg-base-100 h-full">
       <div className="p-4 border-b border-base-300 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Brain className="size-4 text-primary" />
@@ -117,7 +117,7 @@ const AiMemoryChat = ({ onClose }) => {
 
   const { authUser } = { authUser: null }; // Will be grabbed from store below
   const [input, setInput] = useState("");
-  const [showMemoryPanel, setShowMemoryPanel] = useState(true);
+  const [showMemoryPanel, setShowMemoryPanel] = useState(false); // hidden by default on mobile
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -174,7 +174,17 @@ const AiMemoryChat = ({ onClose }) => {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="p-3 border-b border-base-300 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Back button — mobile only */}
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="btn btn-ghost btn-sm btn-circle lg:hidden"
+                aria-label="Back"
+              >
+                <ArrowLeft className="size-5" />
+              </button>
+            )}
             <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
               <Brain className="size-5 text-primary" />
             </div>
@@ -198,7 +208,7 @@ const AiMemoryChat = ({ onClose }) => {
               <RefreshCw className="size-4" />
             </button>
             {onClose && (
-              <button onClick={onClose} className="btn btn-sm btn-ghost">
+              <button onClick={onClose} className="btn btn-sm btn-ghost hidden lg:flex" aria-label="Close">
                 <X className="size-4" />
               </button>
             )}

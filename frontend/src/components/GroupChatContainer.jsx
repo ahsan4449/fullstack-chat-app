@@ -1,9 +1,10 @@
 import { useGroupStore } from "../store/useGroupStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { useEffect, useRef, useState } from "react";
-import { X, Users, LogOut, Bot, Loader, ChevronDown } from "lucide-react";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { X, Users, LogOut, Bot, Loader, ArrowLeft } from "lucide-react";
 import MessageInput from "./MessageInput";
 import MessageRenderer from "./MessageRenderer";
+import MessageContextMenu from "./MessageContextMenu";
 import { formatMessageTime } from "../lib/utils";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
@@ -18,6 +19,7 @@ const GroupChatContainer = () => {
     subscribeToGroupMessages,
     unsubscribeFromGroupMessages,
     leaveGroup,
+    deleteGroupMessage,
   } = useGroupStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -27,6 +29,9 @@ const GroupChatContainer = () => {
   const [aiMode, setAiMode] = useState("summary");
   const [aiResult, setAiResult] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState(null);
 
   useEffect(() => {
     getGroupMessages(selectedGroup._id);
@@ -69,12 +74,35 @@ const GroupChatContainer = () => {
     }
   };
 
+  // ── Context menu handlers ─────────────────────────────────────────────
+  const handleContextMenu = useCallback((e, message) => {
+    e.preventDefault();
+    const selectedText = window.getSelection()?.toString() || "";
+    setContextMenu({ x: e.clientX, y: e.clientY, message, selectedText });
+  }, []);
+
+  const handleDeleteMessage = useCallback(async (messageId) => {
+    await deleteGroupMessage(messageId);
+    setContextMenu(null);
+  }, [deleteGroupMessage]);
+
+  const closeMenu = useCallback(() => setContextMenu(null), []);
+
   return (
     <div className="flex-1 flex flex-col overflow-auto">
       {/* Group Header */}
       <div className="p-2.5 border-b border-base-300">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Back button — mobile only */}
+            <button
+              onClick={() => setSelectedGroup(null)}
+              className="btn btn-ghost btn-sm btn-circle lg:hidden"
+              aria-label="Back"
+            >
+              <ArrowLeft className="size-5" />
+            </button>
+
             {selectedGroup.groupPic ? (
               <img
                 src={selectedGroup.groupPic}
@@ -114,8 +142,12 @@ const GroupChatContainer = () => {
               <LogOut className="size-4" />
             </button>
 
-            {/* Close */}
-            <button onClick={() => setSelectedGroup(null)}>
+            {/* Close — desktop only */}
+            <button
+              onClick={() => setSelectedGroup(null)}
+              className="btn btn-ghost btn-sm btn-circle hidden lg:flex"
+              aria-label="Close"
+            >
               <X className="size-5" />
             </button>
           </div>
@@ -191,7 +223,12 @@ const GroupChatContainer = () => {
                     {formatMessageTime(message.createdAt)}
                   </time>
                 </div>
-                <div className="chat-bubble flex flex-col max-w-[85%]">
+
+                {/* Bubble — right-click to open context menu */}
+                <div
+                  className="chat-bubble flex flex-col max-w-[85%] cursor-context-menu"
+                  onContextMenu={(e) => handleContextMenu(e, message)}
+                >
                   {message.image && (
                     <img
                       src={message.image}
@@ -214,6 +251,22 @@ const GroupChatContainer = () => {
 
       {/* Message Input — reuse with group context */}
       <MessageInput isGroup groupId={selectedGroup._id} />
+
+      {/* Context menu portal */}
+      {contextMenu && (
+        <MessageContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          message={contextMenu.message}
+          isOwn={
+            (contextMenu.message.senderId?._id || contextMenu.message.senderId)?.toString() ===
+            authUser._id?.toString()
+          }
+          selectedText={contextMenu.selectedText}
+          onClose={closeMenu}
+          onDelete={handleDeleteMessage}
+        />
+      )}
     </div>
   );
 };

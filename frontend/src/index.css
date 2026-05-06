@@ -1,2 +1,118 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* ── Mobile / Touch Improvements ───────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  /* Prevent text size inflation on mobile landscape */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  /* Remove tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Give all scrollable chat areas momentum scrolling on iOS */
+.overflow-y-auto,
+.overflow-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent horizontal overflow from breaking layout on mobile */
+* {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Safe area support for notch / home bar devices */
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ── Message Context Menu ────────────────────────────────────────────────── */
+.msg-context-menu {
+  background: rgba(24, 24, 37, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  padding: 6px;
+  min-width: 178px;
+  animation: ctx-pop 0.14s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: top left;
+  user-select: none;
+}
+
+@keyframes ctx-pop {
+  from { opacity: 0; transform: scale(0.88) translateY(-6px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+.ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(220, 220, 240, 0.88);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+.ctx-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+
+.ctx-item:active {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ctx-icon {
+  width: 15px;
+  height: 15px;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+.ctx-item:hover .ctx-icon {
+  opacity: 1;
+}
+
+.ctx-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 8px;
+}
+
+.ctx-item--danger {
+  color: rgba(252, 120, 120, 0.9);
+}
+
+.ctx-item--danger:hover {
+  background: rgba(239, 68, 68, 0.14);
+  color: #fc8181;
+}
+
+/* Allow text selection inside chat bubbles */
+.chat-bubble {
+  user-select: text;
+  -webkit-user-select: text;
+}
+

@@ -2,25 +2,25 @@ import { MessageSquare, Brain, Sparkles } from "lucide-react";
 
 const NoChatSelected = ({ onOpenAiMemory }) => {
   return (
-    <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-base-100/50">
-      <div className="max-w-md text-center space-y-8">
+    <div className="w-full flex flex-1 flex-col items-center justify-center p-6 sm:p-16 bg-base-100/50">
+      <div className="max-w-md text-center space-y-6 sm:space-y-8">
         {/* Icons */}
-        <div className="flex justify-center gap-6 mb-2">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center animate-bounce">
-            <MessageSquare className="w-8 h-8 text-primary" />
+        <div className="flex justify-center gap-4 sm:gap-6 mb-2">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 flex items-center justify-center animate-bounce">
+            <MessageSquare className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
           </div>
           <div
-            className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center animate-bounce"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-secondary/10 flex items-center justify-center animate-bounce"
             style={{ animationDelay: "150ms" }}
           >
-            <Brain className="w-8 h-8 text-secondary" />
+            <Brain className="w-7 h-7 sm:w-8 sm:h-8 text-secondary" />
           </div>
         </div>
 
         {/* Welcome Text */}
         <div>
-          <h2 className="text-2xl font-bold">Welcome to SyncTalk!</h2>
-          <p className="text-base-content/60 mt-2">
+          <h2 className="text-xl sm:text-2xl font-bold">Welcome to SyncTalk!</h2>
+          <p className="text-base-content/60 mt-2 text-sm sm:text-base">
             Select a conversation from the sidebar to start chatting, or try the AI Memory Assistant.
           </p>
         </div>

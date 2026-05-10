@@ -1,0 +1,8 @@
+{
+  "appId": "com.synctalk.app",
+  "appName": "SyncTalk",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

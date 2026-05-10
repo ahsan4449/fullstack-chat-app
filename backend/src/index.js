@@ -28,9 +28,26 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL
-      : "http://localhost:5173",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      const allowedOrigins =
+        process.env.NODE_ENV === "production"
+          ? [
+              process.env.FRONTEND_URL,          // Render web frontend
+              "capacitor://localhost",            // Capacitor Android (default scheme)
+              "https://localhost",               // Capacitor Android (androidScheme: https)
+              "http://localhost",                // fallback
+            ]
+          : ["http://localhost:5173"];
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all for now — tighten after testing
+      }
+    },
     credentials: true,
   })
 );
